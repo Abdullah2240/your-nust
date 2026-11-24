@@ -53,11 +53,19 @@ main{min-height:calc(100vh - 64px - 260px)}
 .tabs a.active,.tabs button.on{color:var(--ink);border-bottom-color:var(--accent-edge)}
 .admin-split{display:grid;grid-template-columns:220px 1fr;gap:32px;align-items:start}
 .admin-nav{display:flex;flex-direction:column;gap:2px;background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-card);padding:8px;position:sticky;top:88px}
-.admin-nav a{padding:9px 12px;border-radius:var(--r-chip);color:var(--ink);font-size:14px;font-weight:500}
+.admin-nav a{padding:9px 12px;border-radius:var(--r-chip);color:var(--ink);font-size:14px;font-weight:500;white-space:nowrap}
 .admin-nav a.active{background:var(--secondary);color:var(--on-secondary)}
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
 .stat{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-card);padding:18px}
 .stat .mono{font-size:30px;line-height:36px;display:block;margin-top:6px}
+.stat-link{color:var(--ink);transition:border-color .15s}
+.stat-link:hover{border-color:var(--border)}
+.admin-split > *{min-width:0}
+.table-scroll{overflow-x:auto;border-radius:var(--r-card)}
+.table-scroll .table{min-width:560px}
+.table .btn{height:34px;padding:0 12px}
+.radio-list{border:0;padding:0}
+.radio-list input{accent-color:var(--secondary);width:16px;height:16px}
 
 /* notifications */
 .notif-list{display:flex;flex-direction:column;border:1px solid var(--hair);border-radius:var(--r-card);background:var(--surface);overflow:hidden}

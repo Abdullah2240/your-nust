@@ -1,8 +1,10 @@
+import { cloneElement } from 'react';
 import { NavLink, Route, Routes } from 'react-router';
 import { PageHead, EmptyState } from '../../components/ui.jsx';
 import { adminTabs } from './adminTabs.jsx';
 
 export default function AdminLayout() {
+  const availablePaths = adminTabs.map((t) => t.path).filter(Boolean);
   return (
     <>
       <PageHead title="Admin panel" subtitle="Manage menus, approvals, reports and users." />
@@ -18,7 +20,12 @@ export default function AdminLayout() {
           <div>
             <Routes>
               {adminTabs.map((t) => (
-                <Route key={t.path} path={t.path || undefined} index={!t.path} element={t.element} />
+                <Route
+                  key={t.path}
+                  path={t.path || undefined}
+                  index={!t.path}
+                  element={t.path ? t.element : cloneElement(t.element, { availablePaths })}
+                />
               ))}
               <Route path="*" element={<EmptyState title="This admin section doesn't exist." />} />
             </Routes>
