@@ -1,0 +1,22 @@
+/* Design tokens: colours, radii, fonts. Light is default; dark via <html data-theme="dark">. */
+:root{
+  --ground:#F2E8DA; --surface:#FAF5EC; --band:#E9DBC8; --placeholder:#D6C7B4;
+  --hair:#D6C7B4; --border:#92795F;
+  --ink:#3B2418; --muted:#7A6253;
+  --secondary:#5C3B28; --on-secondary:#FAF5EC;
+  --accent:#8EC5FF; --on-accent:#3B2418; --accent-edge:#00558E;
+  --link:#00558E; --focus:#00558E;
+  --nav-bg:#3B2418; --nav-ink:#F2E8DA; --nav-muted:#D6C7B4;
+  --ok:#2E6F40; --warn:#8A5A0E; --bad:#9B2C2C; --done-dot:#92795F;
+  --r-chip:5px; --r-btn:7px; --r-card:10px;
+  --serif:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+:root[data-theme="dark"]{
+  --ground:#17100B; --surface:#221811; --band:#1D150F; --placeholder:#33251B;
+  --hair:#33251B; --border:#6E5A48;
+  --ink:#F2E8DA; --muted:#B9A594;
+  --secondary:#6B4630; --on-secondary:#FAF5EC;
+  --accent-edge:#8EC5FF; --link:#8EC5FF; --focus:#8EC5FF;
+  --nav-bg:#0F0A07; --nav-ink:#F2E8DA; --nav-muted:#B9A594;
+  --ok:#74C08F; --warn:#E0A84A; --bad:#EE8270;
+}

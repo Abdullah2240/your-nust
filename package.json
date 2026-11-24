@@ -1,0 +1,19 @@
+{
+  "name": "your-nust",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Your NUST: a community platform for the NUST campus (CS344 Web Engineering end-sem project)",
+  "workspaces": ["server", "client"],
+  "scripts": {
+    "dev": "concurrently -n db,api,web -c gray,blue,magenta \"npm run db --workspace server\" \"npm run dev --workspace server\" \"npm run dev --workspace client\"",
+    "db": "npm run db --workspace server",
+    "test": "npm test --workspace server",
+    "seed": "npm run seed --workspace server",
+    "build": "npm run build --workspace client",
+    "start": "npm start --workspace server"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.7"
+  },
+  "engines": { "node": ">=20" }
+}

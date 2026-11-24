@@ -1,0 +1,15 @@
+/* Ported from the Assignment 2 prototype (reference/prototype/index.html). Keep class names in sync. */
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);font-size:16px;line-height:26px;background:var(--ground);color:var(--ink);-webkit-font-smoothing:antialiased}
+h1,h2{font-family:var(--serif);font-weight:600;letter-spacing:-.01em;font-variation-settings:"opsz" 72}
+h1{font-size:32px;line-height:38px} h2{font-size:24px;line-height:30px}
+h3{font-size:17px;line-height:24px;font-weight:600}
+a{color:var(--link);text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+.muted{color:var(--muted)} .meta{font-size:14px;line-height:20px;color:var(--muted)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:500}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
