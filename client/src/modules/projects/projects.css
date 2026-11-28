@@ -1,0 +1,6 @@
+.label-like{font-size:13px;font-weight:600;margin-bottom:6px}
+.filters .field.no-margin{margin-bottom:0}
+.skillpick .chip.on{background:var(--secondary);color:var(--on-secondary);border-color:var(--secondary)}
+.pcard h3{font-size:20px;line-height:26px}
+.rejection{border:1px solid var(--bad);border-left:4px solid var(--bad);border-radius:var(--r-chip);padding:10px 14px;font-size:14px;line-height:22px;background:var(--surface)}
+.owner-box{display:flex;flex-direction:column;gap:6px}

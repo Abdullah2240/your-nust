@@ -6,9 +6,9 @@ import reportRoutes from './reports/report.routes.js';
 import adminRoutes from './admin/admin.routes.js';
 // import cafeteriaRoutes from './cafeterias/cafeterias.routes.js'; // Part B (Saniya)
 // import lostFoundRoutes from './lostfound/lostfound.routes.js';   // Part B (Saniya)
-// import projectRoutes from './projects/projects.routes.js';       // Part C (Anosh)
-// import carpoolRoutes from './carpool/carpool.routes.js';         // Part C (Anosh)
-// import requestRoutes from './requests/requests.routes.js';       // Part C (Anosh)
+import projectRoutes from './projects/projects.routes.js';       // Part C (Anosh)
+import carpoolRoutes from './carpool/carpool.routes.js';         // Part C (Anosh)
+import requestRoutes from './requests/requests.routes.js';       // Part C (Anosh)
 
 export function registerModules(app) {
   app.use('/api/auth', authRoutes);
@@ -18,7 +18,7 @@ export function registerModules(app) {
   app.use('/api/admin', adminRoutes);
   // app.use('/api/cafeterias', cafeteriaRoutes);    // Part B
   // app.use('/api/lost-found', lostFoundRoutes);    // Part B
-  // app.use('/api/projects', projectRoutes);        // Part C
-  // app.use('/api/carpool', carpoolRoutes);         // Part C
-  // app.use('/api/requests', requestRoutes);        // Part C
+  app.use('/api/projects', projectRoutes);        // Part C
+  app.use('/api/carpool', carpoolRoutes);         // Part C
+  app.use('/api/requests', requestRoutes);        // Part C
 }
