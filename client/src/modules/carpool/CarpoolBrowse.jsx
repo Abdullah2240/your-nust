@@ -34,7 +34,12 @@ export default function CarpoolBrowse() {
       <PageHead
         title="Carpool"
         subtitle="Rides to and from H-12, shared between verified members."
-        actions={<Button variant="primary" onClick={() => gate('offer a ride', () => navigate('/carpool/new'))}>Offer a ride</Button>}
+        actions={
+          <>
+            <Button variant="primary" onClick={() => gate('offer a ride', () => navigate('/carpool/new?kind=offer'))}>Offer a ride</Button>
+            <Button variant="secondary" onClick={() => gate('ask for a ride', () => navigate('/carpool/new?kind=request'))}>Need a ride</Button>
+          </>
+        }
       />
       <Toolbar>
         <Segmented

@@ -4,6 +4,7 @@ import { api } from '../../lib/api.js';
 import { formatDate } from '../../lib/format.js';
 import { useAuth } from '../../auth/AuthContext.jsx';
 import { useAuthGate } from '../../auth/useAuthGate.js';
+import { useToast } from '../../components/Toast.jsx';
 import Icon from '../../components/Icon.jsx';
 import ReportButton from '../../components/ReportButton.jsx';
 import { Button, Chip, EmptyState, ErrorState, Spinner, StatusDot } from '../../components/ui.jsx';
@@ -16,8 +17,23 @@ export default function ProjectDetail() {
   const { id } = useParams();
   const { user } = useAuth();
   const gate = useAuthGate();
+  const toast = useToast();
+  const [busy, setBusy] = useState(false);
   const [open, setOpen] = useState(false);
   const { data: p, error, loading, reload } = useApi(() => api.get(`/projects/${id}`), [id]);
+
+  const toggleStatus = async () => {
+    setBusy(true);
+    try {
+      await api.patch(`/projects/${id}`, { status: p.status === 'Open' ? 'Closed' : 'Open' });
+      toast(p.status === 'Open' ? 'Project closed to new members.' : 'Project reopened.');
+      reload();
+    } catch (err) {
+      toast(err.message);
+    } finally {
+      setBusy(false);
+    }
+  };
 
   if (loading && !p) return <div className="wrap body"><Spinner /></div>;
   if (error?.status === 404) {
@@ -40,11 +56,14 @@ export default function ProjectDetail() {
       <Link to="/projects" className="textlink"><Icon name="back" /> All projects</Link>
 
       {p.approval === 'pending' && (
-        <div className="notice" style={{ marginTop: 20 }}><Icon name="info" /><span>This project is waiting for admin approval. Only you and the admins can see it.</span></div>
+        <div className="notice" style={{ marginTop: 20 }}><Icon name="info" /><span>Waiting for admin approval. Only you and the admins can see this project.</span></div>
       )}
       {p.approval === 'rejected' && (
         <div className="rejection" style={{ marginTop: 20 }}>
-          <strong>Not approved.</strong> {p.rejectionReason} <Link to={`/projects/${p.id}/edit`}>Edit and send it again</Link>.
+          <div className="row between">
+            <span><strong>Not approved:</strong> {p.rejectionReason}</span>
+            <Button as={Link} to={`/projects/${p.id}/edit`} variant="secondary">Edit and resubmit</Button>
+          </div>
         </div>
       )}
       {p.isRemoved && (
@@ -82,7 +101,10 @@ export default function ProjectDetail() {
           {mine ? (
             <>
               <Button as={Link} to={`/projects/${p.id}/edit`} variant="secondary">Edit project</Button>
-              <Button as={Link} to="/me/requests?tab=received" variant="tertiary">See requests</Button>
+              {p.approval === 'approved' && (
+                <Button variant="tertiary" disabled={busy} onClick={toggleStatus}>{p.status === 'Open' ? 'Close project' : 'Reopen project'}</Button>
+              )}
+              <Button as={Link} to="/me/requests?tab=incoming" variant="tertiary">See requests</Button>
             </>
           ) : (
             <>

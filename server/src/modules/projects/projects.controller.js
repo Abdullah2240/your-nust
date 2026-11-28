@@ -60,7 +60,7 @@ export async function createProject(req, res) {
   const project = await Project.create({ ...req.body, owner: req.user._id, currentMembers: 1, approval: 'pending' });
   await notifyAdmins({
     type: 'admin_queue',
-    title: 'A project is waiting for approval',
+    title: 'New project waiting for approval',
     body: `"${project.title}" by ${req.user.name}`,
     link: '/admin/project-approvals',
   });
@@ -141,7 +141,7 @@ export async function decideProject(req, res) {
   await notify({
     userId: project.owner._id,
     type: decision === 'approved' ? 'post_approved' : 'post_rejected',
-    title: decision === 'approved' ? 'Your project is live' : 'Your project was not approved',
+    title: decision === 'approved' ? 'Your project is live' : `Your project was not approved: ${reason}`.slice(0, 190),
     body: decision === 'approved' ? `"${project.title}" is now visible to everyone.` : `"${project.title}": ${reason}`,
     link: `/projects/${project.id}`,
   });

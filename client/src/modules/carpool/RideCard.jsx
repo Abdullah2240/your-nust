@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 import { useAuth } from '../../auth/AuthContext.jsx';
 import Icon from '../../components/Icon.jsx';
-import { Button, Card, StatusDot } from '../../components/ui.jsx';
+import { Button, Card, Chip, StatusDot } from '../../components/ui.jsx';
 import { seatText, whenText } from './rideText.js';
 import './carpool.css';
 
@@ -17,10 +17,11 @@ export default function RideCard({ ride, onRequest }) {
         <StatusDot status={ride.status} />
       </div>
       <div className="ride-facts">
-        <span><Icon name="clock" />{whenText(ride)}</span>
-        <span><Icon name="seat" />{seatText(ride)}</span>
-        <span><Icon name="repeat" />{ride.frequency === 'recurring' ? 'Recurring' : 'One-time'}</span>
+        <span className="mono"><Icon name="clock" />{whenText(ride)}</span>
+        <span className="mono"><Icon name="seat" />{seatText(ride)}</span>
+        <Chip>{ride.frequency === 'recurring' ? 'Recurring' : 'One-time'}</Chip>
       </div>
+      <p className="meta">{ride.owner?.name}, {ride.owner?.department}</p>
       <div className="card-foot">
         <span className="meta">Contact shared after approval</span>
         {mine ? (

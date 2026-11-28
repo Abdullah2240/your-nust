@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { api } from '../../lib/api.js';
+import { useToast } from '../../components/Toast.jsx';
 import { useAuth } from '../../auth/AuthContext.jsx';
 import Icon from '../../components/Icon.jsx';
 import ReportButton from '../../components/ReportButton.jsx';
-import { Button, Chip, EmptyState, ErrorState, Spinner, StatusDot } from '../../components/ui.jsx';
+import { Button, Chip, EmptyState, ErrorState, Field, Input, Select, Spinner, StatusDot } from '../../components/ui.jsx';
 import { useApi } from '../requests/useApi.js';
 import '../requests/requests.css';
 import '../projects/projects.css';
@@ -16,8 +17,31 @@ import './carpool.css';
 export default function RideDetail() {
   const { id } = useParams();
   const { user } = useAuth();
+  const toast = useToast();
   const [open, setOpen] = useState(false);
+  const [status, setStatus] = useState(null);
+  const [seats, setSeats] = useState(null);
+  const [busy, setBusy] = useState(false);
   const { data: r, error, loading, reload } = useApi(() => api.get(`/carpool/${id}`), [id]);
+
+  const save = async () => {
+    setBusy(true);
+    try {
+      const body = {};
+      if (status !== null && status !== r.status) body.status = status;
+      if (seats !== null && Number(seats) !== r.seats) body.seats = Number(seats);
+      if (Object.keys(body).length === 0) return toast('Nothing to save.');
+      await api.patch(`/carpool/${id}`, body);
+      toast('Ride updated.');
+      setStatus(null);
+      setSeats(null);
+      reload();
+    } catch (err) {
+      toast(err.message);
+    } finally {
+      setBusy(false);
+    }
+  };
 
   if (loading && !r) return <div className="wrap body"><Spinner /></div>;
   if (error?.status === 404) {
@@ -64,11 +88,22 @@ export default function RideDetail() {
           </dd>
         </dl>
         <p className="meta">Contact details are shared only after the poster accepts your request.</p>
+        {mine && r.approval === 'approved' && !['Completed', 'Cancelled'].includes(r.status) && (
+          <div className="grid2">
+            <Field label="Status">
+              {(fid) => <Select id={fid} value={status ?? r.status} onChange={(e) => setStatus(e.target.value)} options={['Active', 'Full', 'Completed', 'Cancelled']} />}
+            </Field>
+            <Field label={r.kind === 'offer' ? 'Seats offered (left)' : 'Seats needed'}>
+              {(fid) => <Input id={fid} type="number" min="0" max="8" value={seats ?? r.seats} onChange={(e) => setSeats(e.target.value)} />}
+            </Field>
+            <div><Button variant="secondary" disabled={busy} onClick={save}>{busy ? 'Saving…' : 'Save changes'}</Button></div>
+          </div>
+        )}
         <div className="actions">
           {mine ? (
             <>
-              <Button as={Link} to={`/carpool/${r.id}/edit`} variant="secondary">Update ride</Button>
-              <Button as={Link} to="/me/requests?tab=received" variant="tertiary">See requests</Button>
+              <Button as={Link} to={`/carpool/${r.id}/edit`} variant="tertiary">Edit notes</Button>
+              <Button as={Link} to="/me/requests?tab=incoming" variant="tertiary">See requests</Button>
             </>
           ) : (
             <>

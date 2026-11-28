@@ -69,7 +69,7 @@ export async function createRide(req, res) {
   if (recurringRide) {
     await notifyAdmins({
       type: 'admin_queue',
-      title: 'A recurring ride is waiting for approval',
+      title: 'Recurring ride waiting for approval',
       body: `${ride.displayTitle} by ${req.user.name}`,
       link: '/admin/ride-approvals',
     });
@@ -105,8 +105,8 @@ export async function updateRide(req, res) {
         notify({
           userId: r.requester,
           type: 'status_update',
-          title: status === 'Cancelled' ? 'A ride you joined was cancelled' : 'A ride you joined is complete',
-          body: ride.displayTitle,
+          title: `Ride ${ride.displayTitle} was ${status === 'Cancelled' ? 'cancelled' : 'completed'}`.slice(0, 190),
+          body: status === 'Cancelled' ? 'The poster cancelled this ride.' : 'The poster marked this ride as completed.',
           link: `/carpool/${ride.id}`,
         }),
       ),
@@ -136,7 +136,7 @@ export async function decideRide(req, res) {
   await notify({
     userId: ride.owner._id,
     type: decision === 'approved' ? 'post_approved' : 'post_rejected',
-    title: decision === 'approved' ? 'Your recurring ride is live' : 'Your recurring ride was not approved',
+    title: decision === 'approved' ? 'Your recurring ride is live' : `Your recurring ride was not approved: ${reason}`.slice(0, 190),
     body: decision === 'approved' ? `${ride.displayTitle} is now visible to members.` : `${ride.displayTitle}: ${reason}`,
     link: `/carpool/${ride.id}`,
   });

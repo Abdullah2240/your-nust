@@ -9,6 +9,7 @@ export function isOwnerOrAdmin(project, user) {
 
 export function toProjectJSON(project, viewer) {
   const mine = isOwnerOrAdmin(project, viewer);
+  const ownerId = String(project.owner?._id ?? project.owner);
   const out = {
     id: String(project._id),
     title: project.title,
@@ -17,11 +18,13 @@ export function toProjectJSON(project, viewer) {
     department: project.department,
     teamSize: project.teamSize,
     currentMembers: project.currentMembers,
+    spotsLeft: Math.max(project.teamSize - project.currentMembers, 0),
     status: project.status,
     approval: project.approval,
     owner: toPublicProfile(project.owner),
     createdAt: project.createdAt,
     updatedAt: project.updatedAt,
+    isMine: !!viewer && ownerId === String(viewer._id),
   };
   if (mine) {
     out.rejectionReason = project.rejectionReason || '';

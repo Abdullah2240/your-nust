@@ -11,19 +11,16 @@ export default function ProjectCard({ project, onInterest }) {
         <h3><Link className="link-title" to={`/projects/${project.id}`}>{project.title}</Link></h3>
         <StatusDot status={project.status} />
       </div>
-      <p className="meta" style={{ fontSize: 15, lineHeight: '24px' }}>
-        {project.description.length > 220 ? `${project.description.slice(0, 217)}…` : project.description}
-      </p>
+      <p className="meta clamp3" style={{ fontSize: 15, lineHeight: '24px' }}>{project.description}</p>
       <div className="card-foot">
         <div className="row">
           {project.skills.map((s) => <Chip key={s}>{s}</Chip>)}
-          <span className="meta">{project.department} · team <span className="mono">{project.currentMembers}/{project.teamSize}</span></span>
+          <span className="meta"><span className="mono">{project.currentMembers}/{project.teamSize}</span> members · {project.department}</span>
         </div>
-        {mine ? (
-          <Button as={Link} to={`/projects/${project.id}`} variant="tertiary">Your project</Button>
-        ) : (
-          project.status === 'Open' && <Button variant="secondary" onClick={() => onInterest(project)}>Express interest</Button>
-        )}
+        <div className="actions">
+          <Button as={Link} to={`/projects/${project.id}`} variant="tertiary">View</Button>
+          {!mine && project.status === 'Open' && <Button variant="secondary" onClick={() => onInterest(project)}>Express interest</Button>}
+        </div>
       </div>
     </Card>
   );

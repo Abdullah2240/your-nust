@@ -4,3 +4,7 @@
 .pcard h3{font-size:20px;line-height:26px}
 .rejection{border:1px solid var(--bad);border-left:4px solid var(--bad);border-radius:var(--r-chip);padding:10px 14px;font-size:14px;line-height:22px;background:var(--surface)}
 .owner-box{display:flex;flex-direction:column;gap:6px}
+
+.clamp3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.btn.only-mobile{display:none}
+@media (max-width:760px){.only-desktop{display:none}.btn.only-mobile{display:inline-flex;margin-bottom:16px}}

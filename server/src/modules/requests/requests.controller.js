@@ -58,7 +58,7 @@ export async function createRequest(req, res) {
     type: 'request_new',
     title: clip(`${req.user.name} sent a request for "${target.displayTitle}"`, 190),
     body: clip(`${req.user.department}. ${message}${skills}`, 950),
-    link: '/me/requests?tab=received',
+    link: '/me/requests?tab=incoming',
   });
 
   request.requester = req.user;
@@ -145,7 +145,7 @@ export async function withdrawRequest(req, res) {
     type: 'status_update',
     title: clip(`${req.user.name} withdrew their request`, 190),
     body: target?.displayTitle ?? '',
-    link: '/me/requests?tab=received',
+    link: '/me/requests?tab=incoming',
   });
   await updated.populate('requester');
   await updated.populate('owner');

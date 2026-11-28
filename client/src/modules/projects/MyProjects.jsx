@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { api } from '../../lib/api.js';
+import { useToast } from '../../components/Toast.jsx';
 import { formatRelative } from '../../lib/format.js';
 import Pagination from '../../components/Pagination.jsx';
 import { Button, Card, Chip, EmptyState, ErrorState, Spinner, StatusDot } from '../../components/ui.jsx';
@@ -9,8 +10,19 @@ import '../requests/requests.css';
 import './projects.css';
 
 export default function MyProjects() {
+  const toast = useToast();
   const [page, setPage] = useState(1);
   const { data, error, loading, reload } = useApi(() => api.get('/projects/mine', { page }), [page]);
+
+  const toggle = async (p) => {
+    try {
+      await api.patch(`/projects/${p.id}`, { status: p.status === 'Open' ? 'Closed' : 'Open' });
+      toast(p.status === 'Open' ? 'Project closed.' : 'Project reopened.');
+      reload();
+    } catch (err) {
+      toast(err.message);
+    }
+  };
 
   if (error) return <ErrorState error={error} onRetry={reload} />;
   if (loading && !data) return <Spinner />;
@@ -29,7 +41,7 @@ export default function MyProjects() {
           <div className="row between">
             <Link className="link-title" to={`/projects/${p.id}`}>{p.title}</Link>
             <div className="row">
-              {p.isRemoved ? <StatusDot status="rejected" label="Removed by moderator" /> : <StatusDot status={p.approval} label={p.approval === 'approved' ? 'Live' : undefined} />}
+              {p.isRemoved ? <StatusDot status="rejected" label="Removed by a moderator" /> : <StatusDot status={p.approval} label={p.approval === 'approved' ? 'Live' : undefined} />}
               {p.approval === 'approved' && !p.isRemoved && <StatusDot status={p.status} />}
             </div>
           </div>
@@ -39,7 +51,12 @@ export default function MyProjects() {
               {p.skills.map((s) => <Chip key={s}>{s}</Chip>)}
               <span className="meta">team <span className="mono">{p.currentMembers}/{p.teamSize}</span> · <span className="mono">{formatRelative(p.createdAt)}</span></span>
             </div>
-            {!p.isRemoved && <Button as={Link} to={`/projects/${p.id}/edit`} variant="tertiary">Edit</Button>}
+            {!p.isRemoved && (
+              <div className="actions">
+                {p.approval === 'approved' && <Button variant="tertiary" onClick={() => toggle(p)}>{p.status === 'Open' ? 'Close' : 'Reopen'}</Button>}
+                <Button as={Link} to={`/projects/${p.id}/edit`} variant="tertiary">Edit</Button>
+              </div>
+            )}
           </div>
         </Card>
       ))}

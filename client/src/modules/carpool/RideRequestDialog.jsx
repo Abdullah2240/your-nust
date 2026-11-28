@@ -14,7 +14,8 @@ export default function RideRequestDialog({ ride, onClose, onSent }) {
       title={isOffer ? 'Request a seat' : 'Offer this ride'}
       intro={`${ride.origin} to ${ride.destination}. The poster sees your basic profile and can accept or decline. Phone numbers stay hidden until then.`}
       placeholder={isOffer ? 'Where exactly will you be waiting?' : 'Where can you pick them up, and when?'}
-      maxSeats={isOffer ? ride.seats : undefined}
+      showSeats={isOffer}
+      maxSeats={ride.seats}
     />
   );
 }

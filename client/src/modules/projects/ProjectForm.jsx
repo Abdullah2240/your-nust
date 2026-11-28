@@ -53,9 +53,9 @@ export default function ProjectForm() {
         toast('Project updated.');
         navigate(`/projects/${id}`);
       } else {
-        await api.post('/projects', body);
-        toast('Submitted. An admin will check it before it appears.');
-        navigate('/me/posts?tab=projects');
+        const created = await api.post('/projects', body);
+        toast('Submitted. An admin will review it shortly.');
+        navigate(`/projects/${created.id}`);
       }
     } catch (err) {
       setErrors(err.fields || {});
@@ -89,7 +89,7 @@ export default function ProjectForm() {
               <Field label="School" error={errors.department}>
                 {(fid) => <Select id={fid} value={form.department} onChange={set('department')} options={SCHOOLS} disabled={locked} invalid={!!errors.department} />}
               </Field>
-              <Field label="Team size (including you)" error={errors.teamSize}>
+              <Field label="Team size" error={errors.teamSize} hint="Including you">
                 {(fid) => <Input id={fid} type="number" min="2" max="20" value={form.teamSize} onChange={set('teamSize')} invalid={!!errors.teamSize} />}
               </Field>
             </div>

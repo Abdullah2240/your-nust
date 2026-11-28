@@ -4,6 +4,7 @@ import { api } from '../../lib/api.js';
 import { SCHOOLS } from '../../lib/constants.js';
 import { useAuthGate } from '../../auth/useAuthGate.js';
 import Pagination from '../../components/Pagination.jsx';
+import Modal from '../../components/Modal.jsx';
 import { Button, EmptyState, ErrorState, Field, Input, PageHead, Select, Spinner } from '../../components/ui.jsx';
 import RequestDialog from '../requests/RequestDialog.jsx';
 import { useApi } from '../requests/useApi.js';
@@ -22,6 +23,7 @@ export default function ProjectsBrowse() {
   const navigate = useNavigate();
   const gate = useAuthGate();
   const [target, setTarget] = useState(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const picked = (params.get('skill') || '').split(',').filter(Boolean);
   const department = params.get('department') || '';
@@ -54,7 +56,7 @@ export default function ProjectsBrowse() {
       />
       <div className="wrap body">
         <div className="split">
-          <aside className="filters" aria-label="Filters">
+          <aside className="filters only-desktop" aria-label="Filters">
             <Field label="Search" id="proj-q">
               {(id) => <Input id={id} type="search" value={q} onChange={(e) => update({ q: e.target.value })} placeholder="Title or keyword" />}
             </Field>
@@ -76,6 +78,7 @@ export default function ProjectsBrowse() {
             </Field>
           </aside>
           <div>
+            <Button className="only-mobile" variant="secondary" onClick={() => setFiltersOpen(true)}>Filters{picked.length + [department, status, size].filter(Boolean).length ? ` (${picked.length + [department, status, size].filter(Boolean).length})` : ''}</Button>
             {error && <ErrorState error={error} onRetry={reload} />}
             {!error && loading && !data && <Spinner />}
             {data && (
@@ -96,6 +99,29 @@ export default function ProjectsBrowse() {
           </div>
         </div>
       </div>
+      <Modal open={filtersOpen} onClose={() => setFiltersOpen(false)} title="Filters" footer={<Button variant="primary" onClick={() => setFiltersOpen(false)}>Show projects</Button>}>
+        <div className="filters" style={{ position: 'static', border: 0, padding: 0 }}>
+            <Field label="Search" id="proj-q">
+                {(id) => <Input id={id} type="search" value={q} onChange={(e) => update({ q: e.target.value })} placeholder="Title or keyword" />}
+              </Field>
+              <p className="label-like" id="skills-label">Skills</p>
+              <div className="skillpick" role="group" aria-labelledby="skills-label">
+                {(skillsQuery.data || []).map((s) => (
+                  <button key={s} type="button" className={`chip${picked.includes(s) ? ' on' : ''}`} aria-pressed={picked.includes(s)} onClick={() => toggleSkill(s)}>{s}</button>
+                ))}
+                {skillsQuery.data?.length === 0 && <span className="meta">No skills yet.</span>}
+              </div>
+              <Field label="School">
+                {(id) => <Select id={id} value={department} onChange={(e) => update({ department: e.target.value })} options={[{ value: '', label: 'All schools' }, ...SCHOOLS]} />}
+              </Field>
+              <Field label="Status">
+                {(id) => <Select id={id} value={status} onChange={(e) => update({ status: e.target.value })} options={[{ value: '', label: 'Any' }, 'Open', 'Closed']} />}
+              </Field>
+              <Field label="Team size" className="no-margin">
+                {(id) => <Select id={id} value={size} onChange={(e) => update({ size: e.target.value })} options={SIZES} />}
+              </Field>
+        </div>
+      </Modal>
       <RequestDialog
         open={!!target}
         onClose={() => setTarget(null)}

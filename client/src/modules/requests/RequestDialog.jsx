@@ -5,7 +5,7 @@ import Modal from '../../components/Modal.jsx';
 import { useToast } from '../../components/Toast.jsx';
 import { Button, Field, Select, Textarea } from '../../components/ui.jsx';
 
-export default function RequestDialog({ open, onClose, targetType, targetId, title, intro, placeholder, maxSeats, onSent }) {
+export default function RequestDialog({ open, onClose, targetType, targetId, title, intro, placeholder, showSeats, maxSeats, onSent }) {
   const toast = useToast();
   const [message, setMessage] = useState('');
   const [seats, setSeats] = useState('1');
@@ -23,9 +23,9 @@ export default function RequestDialog({ open, onClose, targetType, targetId, tit
     setError(null);
     try {
       const body = { targetType, targetId, message };
-      if (maxSeats) body.seats = Number(seats);
+      if (showSeats) body.seats = Number(seats);
       await api.post('/requests', body);
-      toast('Request sent. You will be notified when they answer.');
+      toast('Request sent');
       setMessage('');
       setSeats('1');
       onClose();
@@ -44,7 +44,7 @@ export default function RequestDialog({ open, onClose, targetType, targetId, tit
       <form onSubmit={submit} noValidate>
         <p className="muted">{intro}</p>
         <div style={{ marginTop: 14 }}>
-          {maxSeats ? (
+          {showSeats ? (
             <Field label="Seats" error={error?.fields?.seats}>
               {(id) => <Select id={id} value={seats} onChange={(e) => setSeats(e.target.value)} options={seatOptions} />}
             </Field>

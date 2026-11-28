@@ -1,12 +1,14 @@
 // Create a ride at /carpool/new, or update seats, notes and status at /carpool/:id/edit.
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { api } from '../../lib/api.js';
 import { DAYS } from '../../lib/constants.js';
 import { useToast } from '../../components/Toast.jsx';
 import { Button, Card, ErrorState, Field, Input, PageHead, Segmented, Select, Spinner, Textarea } from '../../components/ui.jsx';
 import SafetyNotice from './SafetyNotice.jsx';
 import './carpool.css';
+
+const PLACES = ['H-12, Gate 1', 'G-11', 'I-8', 'Bahria Phase 7', 'DHA II', 'F-10 Markaz', 'Saddar'];
 
 // "2026-11-30T08:15" in the user's own time zone, for the datetime-local input's min value.
 function localNow() {
@@ -18,12 +20,13 @@ export default function RideForm() {
   const { id } = useParams();
   const editing = !!id;
   const navigate = useNavigate();
+  const [search] = useSearchParams();
   const toast = useToast();
 
   const [loaded, setLoaded] = useState(!editing);
   const [loadError, setLoadError] = useState(null);
   const [ride, setRide] = useState(null);
-  const [form, setForm] = useState({ kind: 'offer', frequency: 'one-time', origin: '', destination: '', when: '', days: [], time: '08:00', seats: '1', notes: '', status: 'Active' });
+  const [form, setForm] = useState({ kind: search.get('kind') === 'request' ? 'request' : 'offer', frequency: 'one-time', origin: '', destination: '', when: '', days: [], time: '08:00', seats: '1', notes: '', status: 'Active' });
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -84,17 +87,18 @@ export default function RideForm() {
             {!editing && (
               <>
                 <Field label="What are you posting?" error={errors.kind}>
-                  <Segmented label="Offer or request" value={form.kind} onChange={(v) => setForm((f) => ({ ...f, kind: v }))} options={[{ value: 'offer', label: 'I am offering a ride' }, { value: 'request', label: 'I need a ride' }]} />
+                  <Segmented label="Offer or request" value={form.kind} onChange={(v) => setForm((f) => ({ ...f, kind: v }))} options={[{ value: 'offer', label: 'Offering a ride' }, { value: 'request', label: 'Need a ride' }]} />
                 </Field>
                 <Field label="How often?" error={errors.frequency} hint={form.frequency === 'recurring' ? 'Recurring rides are checked by an admin before they appear.' : undefined}>
                   <Segmented label="One-time or recurring" value={form.frequency} onChange={(v) => setForm((f) => ({ ...f, frequency: v }))} options={[{ value: 'one-time', label: 'One-time' }, { value: 'recurring', label: 'Recurring' }]} />
                 </Field>
+                <datalist id="place-suggestions">{PLACES.map((x) => <option key={x} value={x} />)}</datalist>
                 <div className="grid2">
                   <Field label="From" error={errors.origin}>
-                    {(fid) => <Input id={fid} value={form.origin} onChange={set('origin')} maxLength={60} invalid={!!errors.origin} placeholder="For example: G-11" />}
+                    {(fid) => <Input id={fid} list="place-suggestions" value={form.origin} onChange={set('origin')} maxLength={60} invalid={!!errors.origin} placeholder="For example: G-11" />}
                   </Field>
                   <Field label="To" error={errors.destination}>
-                    {(fid) => <Input id={fid} value={form.destination} onChange={set('destination')} maxLength={60} invalid={!!errors.destination} placeholder="For example: H-12, Gate 1" />}
+                    {(fid) => <Input id={fid} list="place-suggestions" value={form.destination} onChange={set('destination')} maxLength={60} invalid={!!errors.destination} placeholder="For example: H-12, Gate 1" />}
                   </Field>
                 </div>
                 {form.frequency === 'one-time' ? (
@@ -127,7 +131,7 @@ export default function RideForm() {
               </>
             )}
 
-            <Field label={isOffer ? 'Seats free' : 'Seats needed'} error={errors.seats}>
+            <Field label={isOffer ? 'Seats offered' : 'Seats needed'} error={errors.seats}>
               {(fid) => <Input id={fid} type="number" min={editing ? 0 : 1} max="8" value={form.seats} onChange={set('seats')} invalid={!!errors.seats} />}
             </Field>
             <Field label="Notes (optional)" error={errors.notes} hint="Pick-up spot, luggage, anything riders should know. Don't put phone numbers here.">

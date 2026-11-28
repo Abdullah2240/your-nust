@@ -32,6 +32,7 @@ test('one-time rides are approved at once; recurring rides wait for an admin', a
   const one = await a.post('/api/carpool').send(oneTime());
   assert.equal(one.status, 201);
   assert.equal(one.body.data.approval, 'approved');
+  assert.equal(one.body.data.isMine, true);
 
   const rec = await a.post('/api/carpool').send(recurring());
   assert.equal(rec.status, 201);
@@ -40,6 +41,7 @@ test('one-time rides are approved at once; recurring rides wait for an admin', a
 
   const viewer = await agentFor(await createUser());
   assert.equal((await viewer.get('/api/carpool')).body.data.total, 1);
+  assert.equal((await viewer.get('/api/carpool')).body.data.items[0].isMine, false);
   assert.equal((await viewer.get(`/api/carpool/${rec.body.data.id}`)).status, 404);
 
   const adm = await agentFor(admin);

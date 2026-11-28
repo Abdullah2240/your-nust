@@ -40,6 +40,8 @@ test('creating a project makes it pending, notifies admins and hides it from the
   assert.equal(res.status, 201);
   assert.equal(res.body.data.approval, 'pending');
   assert.equal(res.body.data.currentMembers, 1);
+  assert.equal(res.body.data.isMine, true);
+  assert.equal(res.body.data.spotsLeft, 3);
   assert.equal((await request(app).get('/api/projects')).body.data.total, 0);
   assert.equal(await Notification.countDocuments({ user: admin._id, type: 'admin_queue' }), 1);
 });

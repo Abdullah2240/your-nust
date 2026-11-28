@@ -7,6 +7,7 @@ export function isRideOwnerOrAdmin(ride, user) {
 
 export function toRideJSON(ride, viewer) {
   const mine = isRideOwnerOrAdmin(ride, viewer);
+  const ownerId = String(ride.owner?._id ?? ride.owner);
   const out = {
     id: String(ride._id),
     kind: ride.kind,
@@ -23,6 +24,7 @@ export function toRideJSON(ride, viewer) {
     owner: toPublicProfile(ride.owner),
     createdAt: ride.createdAt,
     updatedAt: ride.updatedAt,
+    isMine: !!viewer && ownerId === String(viewer._id),
   };
   if (mine) {
     out.rejectionReason = ride.rejectionReason || '';

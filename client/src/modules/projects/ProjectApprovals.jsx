@@ -8,7 +8,7 @@ export default function ProjectApprovals() {
     <ApprovalQueue
       title="Project approvals"
       endpoint="/projects"
-      emptyText="No projects waiting. All clear."
+      emptyText="Nothing waiting for approval."
       renderBody={(p) => (
         <>
           <div className="row between">

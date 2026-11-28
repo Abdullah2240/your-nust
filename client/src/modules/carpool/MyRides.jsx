@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { api } from '../../lib/api.js';
+import { useToast } from '../../components/Toast.jsx';
 import Icon from '../../components/Icon.jsx';
 import Pagination from '../../components/Pagination.jsx';
 import { Button, Card, EmptyState, ErrorState, Spinner, StatusDot } from '../../components/ui.jsx';
@@ -10,8 +11,20 @@ import { seatText, whenText } from './rideText.js';
 import './carpool.css';
 
 export default function MyRides() {
+  const toast = useToast();
   const [page, setPage] = useState(1);
   const { data, error, loading, reload } = useApi(() => api.get('/carpool/mine', { page }), [page]);
+
+  const cancelRide = async (r) => {
+    if (!window.confirm('Cancel this ride? People you already accepted will be told.')) return;
+    try {
+      await api.patch(`/carpool/${r.id}`, { status: 'Cancelled' });
+      toast('Ride cancelled.');
+      reload();
+    } catch (err) {
+      toast(err.message);
+    }
+  };
 
   if (error) return <ErrorState error={error} onRetry={reload} />;
   if (loading && !data) return <Spinner />;
@@ -30,7 +43,7 @@ export default function MyRides() {
           <div className="row between">
             <Link className="route" to={`/carpool/${r.id}`}>{r.origin}<Icon name="arrow" />{r.destination}</Link>
             <div className="row">
-              {r.isRemoved ? <StatusDot status="rejected" label="Removed by moderator" /> : <StatusDot status={r.approval} label={r.approval === 'approved' ? 'Live' : undefined} />}
+              {r.isRemoved ? <StatusDot status="rejected" label="Removed by a moderator" /> : <StatusDot status={r.approval} label={r.approval === 'approved' ? 'Live' : undefined} />}
               {r.approval === 'approved' && !r.isRemoved && <StatusDot status={r.status} />}
             </div>
           </div>
@@ -42,7 +55,12 @@ export default function MyRides() {
           </div>
           <div className="card-foot">
             <span className="meta">{r.kind === 'offer' ? 'Ride offered' : 'Ride needed'}</span>
-            {!r.isRemoved && r.approval === 'approved' && <Button as={Link} to={`/carpool/${r.id}/edit`} variant="tertiary">Update</Button>}
+            {!r.isRemoved && r.approval === 'approved' && (
+              <div className="actions">
+                {['Active', 'Full'].includes(r.status) && <Button variant="tertiary" onClick={() => cancelRide(r)}>Cancel ride</Button>}
+                <Button as={Link} to={`/carpool/${r.id}`} variant="tertiary">Update</Button>
+              </div>
+            )}
           </div>
         </Card>
       ))}

@@ -10,7 +10,7 @@ export default function RideApprovals() {
     <ApprovalQueue
       title="Ride approvals"
       endpoint="/carpool"
-      emptyText="No recurring rides waiting. All clear."
+      emptyText="Nothing waiting for approval."
       renderBody={(r) => (
         <div className="ride">
           <div className="row between">
