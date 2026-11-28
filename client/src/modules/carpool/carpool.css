@@ -1,0 +1,8 @@
+.day-pick{display:flex;flex-wrap:wrap;gap:8px}
+.day-pick .chip{cursor:pointer;font-size:12px;padding:7px 12px}
+.day-pick .chip.on{background:var(--secondary);color:var(--on-secondary);border-color:var(--secondary)}
+a.route{color:var(--ink)}
+a.route:hover{text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--border)}
+h1.route{font-size:30px;line-height:38px}
+.ride-facts svg,.ride .route svg{flex:none}
+@media (max-width:760px){h1.route{font-size:24px;line-height:32px}}

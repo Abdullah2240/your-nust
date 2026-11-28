@@ -9,9 +9,9 @@ import { NotFound } from './modules/static/StaticPages.jsx';
 // import { routes as homeRoutes } from './modules/home/routes.jsx';             // Part B (Saniya)
 // import { routes as cafeteriaRoutes } from './modules/cafeterias/routes.jsx';  // Part B (Saniya)
 // import { routes as lostFoundRoutes } from './modules/lostfound/routes.jsx';   // Part B (Saniya)
-// import { routes as projectRoutes } from './modules/projects/routes.jsx';      // Part C (Anosh)
-// import { routes as carpoolRoutes } from './modules/carpool/routes.jsx';       // Part C (Anosh)
-// import { routes as requestRoutes } from './modules/requests/routes.jsx';      // Part C (Anosh)
+import { routes as projectRoutes } from './modules/projects/routes.jsx';      // Part C (Anosh)
+import { routes as carpoolRoutes } from './modules/carpool/routes.jsx';       // Part C (Anosh)
+import { routes as requestRoutes } from './modules/requests/routes.jsx';      // Part C (Anosh)
 
 const UiKit = lazy(() => import('./modules/dev/UiKit.jsx'));
 
@@ -34,9 +34,9 @@ export const routes = [
   // ...homeRoutes,
   // ...cafeteriaRoutes,
   // ...lostFoundRoutes,
-  // ...projectRoutes,
-  // ...carpoolRoutes,
-  // ...requestRoutes,
+  ...projectRoutes,
+  ...carpoolRoutes,
+  ...requestRoutes,
   ...(import.meta.env.DEV ? [{ path: '/dev/ui', element: <UiKit /> }] : []),
   { path: '*', element: <NotFound /> },
 ];
